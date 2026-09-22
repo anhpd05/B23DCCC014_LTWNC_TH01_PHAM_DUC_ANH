@@ -14,9 +14,7 @@ import {
 } from "../assignmentsSlice";
 import type { Assignment, FilterStatus } from "../types";
 
-/**
- * không suy ngược từ `ReturnType<typeof useAssignments>`.
- */
+/** Khai báo tường minh — không suy ngược từ `ReturnType<typeof useAssignments>`. */
 export interface AssignmentsFacade {
   items: Assignment[];
   counts: Record<FilterStatus, number>;

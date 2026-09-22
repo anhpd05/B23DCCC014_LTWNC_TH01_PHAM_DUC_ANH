@@ -426,6 +426,11 @@ select:focus-visible,
   color: var(--danger);
 }
 
+.countdown--muted {
+  color: var(--muted);
+  font-weight: 400;
+}
+
 /* ---- ô đánh dấu hoàn thành ---- */
 .check {
   display: grid;

@@ -24,14 +24,14 @@ interface AssignmentItemProps {
 
 type Tone = "ok" | "warn" | "danger";
 
-/** ic độ ưu tiên — Record ép khai báo đủ 3 nhánh của Priority. */
+/** Icon độ ưu tiên — Record ép khai báo đủ 3 nhánh của Priority. */
 const PRIORITY_ICON: Record<Priority, LucideIcon> = {
   high: ChevronsUp,
   medium: Equal,
   low: ChevronDown,
 };
 
-/** ic theo mức gấp của hạn nộp. */
+/** Icon theo mức gấp của hạn nộp. */
 const TONE_ICON: Record<Tone, LucideIcon> = {
   ok: CalendarCheck,
   warn: Clock,
@@ -89,12 +89,12 @@ export function AssignmentItem({
             <CalendarDays size={13} aria-hidden="true" />
             {new Date(data.dueDate).toLocaleDateString("vi-VN")}
           </span>
-          {!data.completed && (
-            <span className={`countdown countdown--${countdown.tone}`}>
-              <ToneIcon size={13} aria-hidden="true" />
-              {countdown.label}
-            </span>
-          )}
+          <span
+            className={`countdown countdown--${data.completed ? "muted" : countdown.tone}`}
+          >
+            <ToneIcon size={13} aria-hidden="true" />
+            {countdown.label}
+          </span>
         </p>
       </div>
 
