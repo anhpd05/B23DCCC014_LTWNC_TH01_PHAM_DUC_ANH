@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
+import { Assignment } from './entities/assignment.entity';
+import { createAssignmentsMock } from './mock/assignments.mock';
 
 @Injectable()
 export class AssignmentsService {
-  create(createAssignmentDto: CreateAssignmentDto) {
-    return 'This action adds a new assignment';
+  private items: Assignment[] = createAssignmentsMock();
+
+  create(createAssignmentDto: CreateAssignmentDto): Assignment {
+    const assignment: Assignment = {
+      id: randomUUID(),
+      completed: false,
+      ...createAssignmentDto,
+    };
+    this.items.push(assignment);
+    return assignment;
   }
 
-  findAll() {
-    return `This action returns all assignments`;
+  findAll(): Assignment[] {
+    return this.items;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} assignment`;
+  findOne(id: string): Assignment {
+    const found = this.items.find((item) => item.id === id);
+    if (!found) {
+      throw new NotFoundException(`Không tìm thấy assignment với id "${id}"`);
+    }
+    return found;
   }
 
-  update(id: number, updateAssignmentDto: UpdateAssignmentDto) {
-    return `This action updates a #${id} assignment`;
+  update(id: string, updateAssignmentDto: UpdateAssignmentDto): Assignment {
+    const found = this.findOne(id);
+    Object.assign(found, updateAssignmentDto);
+    return found;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} assignment`;
+  remove(id: string): Assignment {
+    const index = this.items.findIndex((item) => item.id === id);
+    if (index === -1) {
+      throw new NotFoundException(`Không tìm thấy assignment với id "${id}"`);
+    }
+    const [removed] = this.items.splice(index, 1);
+    return removed;
   }
 }

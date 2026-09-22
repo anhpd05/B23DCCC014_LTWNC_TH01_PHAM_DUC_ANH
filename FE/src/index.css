@@ -17,3 +17,161 @@
 body {
   margin: 0;
 }
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--warn);
+  outline-offset: 2px;
+}
+
+/* Form */
+.assignment-form {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.field {
+  display: grid;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.field-error {
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filters button {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.filters button[aria-pressed='true'] {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+/* List */
+.list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 24px 0;
+}
+
+.assignment-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.assignment-item--busy {
+  opacity: 0.5;
+}
+
+.assignment-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.assignment-item__subject {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.assignment-item__title {
+  margin: 2px 0;
+  font-weight: 600;
+}
+
+.assignment-item__title--done {
+  text-decoration: line-through;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.assignment-item__due {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Badge */
+.badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge--high {
+  background: #fdecea;
+  color: var(--danger);
+}
+
+.badge--medium {
+  background: #fff4e0;
+  color: var(--warn);
+}
+
+.badge--low {
+  background: #e9f5ea;
+  color: var(--ok);
+}
+
+/* Countdown */
+.countdown--ok {
+  color: var(--ok);
+}
+
+.countdown--warn {
+  color: var(--warn);
+}
+
+.countdown--danger {
+  color: var(--danger);
+  font-weight: 600;
+}
