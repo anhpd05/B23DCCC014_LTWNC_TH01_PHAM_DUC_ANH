@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-
-const DAY_MS = 86_400_000;
-const startOfDay = (t: number) => new Date(t).setHours(0, 0, 0, 0);
+import { DAY_MS, startOfDay } from '../date';
 
 export function useCountdown(dueDate: string) {
   const [now, setNow] = useState(() => Date.now());

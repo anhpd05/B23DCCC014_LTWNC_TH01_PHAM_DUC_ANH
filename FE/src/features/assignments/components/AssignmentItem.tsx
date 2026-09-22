@@ -1,5 +1,19 @@
-import { useCountdown } from '../../../shared/hooks/useCountdown';
-import { PRIORITY_LABEL, type Assignment } from '../types';
+import {
+  AlertTriangle,
+  BookOpen,
+  CalendarCheck,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  ChevronsUp,
+  Clock,
+  Equal,
+  Loader2,
+  Trash2,
+  type LucideIcon,
+} from "lucide-react";
+import { useCountdown } from "../../../shared/hooks/useCountdown";
+import { PRIORITY_LABEL, type Assignment, type Priority } from "../types";
 
 interface AssignmentItemProps {
   data: Assignment;
@@ -8,40 +22,100 @@ interface AssignmentItemProps {
   onRemove: (id: string) => void;
 }
 
-export function AssignmentItem({ data, busy, onToggle, onRemove }: AssignmentItemProps) {
+type Tone = "ok" | "warn" | "danger";
+
+/** ic độ ưu tiên — Record ép khai báo đủ 3 nhánh của Priority. */
+const PRIORITY_ICON: Record<Priority, LucideIcon> = {
+  high: ChevronsUp,
+  medium: Equal,
+  low: ChevronDown,
+};
+
+/** ic theo mức gấp của hạn nộp. */
+const TONE_ICON: Record<Tone, LucideIcon> = {
+  ok: CalendarCheck,
+  warn: Clock,
+  danger: AlertTriangle,
+};
+
+export function AssignmentItem({
+  data,
+  busy,
+  onToggle,
+  onRemove,
+}: AssignmentItemProps) {
   const countdown = useCountdown(data.dueDate);
+  const PriorityIcon = PRIORITY_ICON[data.priority];
+  const ToneIcon = TONE_ICON[countdown.tone];
+  const accent = data.completed ? "done" : countdown.tone;
 
   return (
-    <li className={`assignment-item${busy ? ' assignment-item--busy' : ''}`}>
-      <input
-        type="checkbox"
-        checked={data.completed}
-        disabled={busy}
-        onChange={() => onToggle(data)}
-        aria-label={`Đánh dấu hoàn thành ${data.title}`}
-      />
+    <li
+      className={`assignment-item assignment-item--${accent}${busy ? " assignment-item--busy" : ""}`}
+      aria-busy={busy}
+    >
+      <label className="check">
+        <input
+          className="check__input"
+          type="checkbox"
+          checked={data.completed}
+          disabled={busy}
+          onChange={() => onToggle(data)}
+          aria-label={`Đánh dấu hoàn thành ${data.title}`}
+        />
+        <span className="check__box" aria-hidden="true">
+          <Check size={13} strokeWidth={3.25} />
+        </span>
+      </label>
+
       <div className="assignment-item__body">
-        <p className="assignment-item__subject">{data.subject}</p>
+        <p className="assignment-item__subject">
+          <BookOpen size={12} aria-hidden="true" />
+          {data.subject}
+        </p>
+
         <p
           className={
             data.completed
-              ? 'assignment-item__title assignment-item__title--done'
-              : 'assignment-item__title'
+              ? "assignment-item__title assignment-item__title--done"
+              : "assignment-item__title"
           }
         >
-          {data.completed ? '✓ ' : ''}
           {data.title}
         </p>
+
         <p className="assignment-item__due">
-          Hạn: {new Date(data.dueDate).toLocaleDateString('vi-VN')}
+          <span>
+            <CalendarDays size={13} aria-hidden="true" />
+            {new Date(data.dueDate).toLocaleDateString("vi-VN")}
+          </span>
           {!data.completed && (
-            <span className={`countdown countdown--${countdown.tone}`}> · {countdown.label}</span>
+            <span className={`countdown countdown--${countdown.tone}`}>
+              <ToneIcon size={13} aria-hidden="true" />
+              {countdown.label}
+            </span>
           )}
         </p>
       </div>
-      <span className={`badge badge--${data.priority}`}>{PRIORITY_LABEL[data.priority]}</span>
-      <button type="button" disabled={busy} onClick={() => onRemove(data.id)}>
-        Xoá
+
+      <span className={`badge badge--${data.priority}`}>
+        <PriorityIcon size={12} aria-hidden="true" />
+        {PRIORITY_LABEL[data.priority]}
+      </span>
+
+      <button
+        type="button"
+        className="icon-btn"
+        disabled={busy}
+        title={`Xoá ${data.title}`}
+        aria-label={`Xoá ${data.title}`}
+        onClick={() => onRemove(data.id)}
+      >
+        {busy ? (
+          <Loader2 size={16} className="spin" aria-hidden="true" />
+        ) : (
+          <Trash2 size={16} aria-hidden="true" />
+        )}
       </button>
     </li>
   );

@@ -1,67 +1,252 @@
+/* ============================================================================
+   Student Deadline Tracker — hệ thống giao diện
+   Bảng màu: Productivity Tool (teal focus + warm neutral canvas).
+   Mọi cặp màu chữ/nền đã đo theo WCAG 2, ghi ngay cạnh token.
+   Chuyển động: 120–220ms, ease-out khi vào, và tắt hoàn toàn khi người dùng
+   bật prefers-reduced-motion.
+   ============================================================================ */
+
+:root {
+  /* --- nền & mực --- */
+  --bg: #f7f6f3;          /* canvas trung tính ấm */
+  --surface: #ffffff;
+  --surface-2: #faf9f7;
+  --ink: #1c1b19;         /* 15.92:1 trên bg — AAA */
+  --muted: #63605a;       /* 5.80:1 — AA  */
+  --faint: #8a8680;       /* 3.35:1 — chỉ cho viền/biểu tượng, KHÔNG cho chữ nhỏ */
+  --line: #e5e2dc;
+  --line-strong: #cfcbc3;
+
+  /* --- màu ngữ nghĩa --- */
+  --primary: #0f766e;     /* 5.06:1 trên bg · trắng trên nền này 5.47:1 */
+  --primary-deep: #115e59;
+  --primary-wash: #e6f2f0;
+  --danger: #b3261e;      /* 6.05:1 */
+  --danger-wash: #fbeceb;
+  --warn: #a85a07;        /* 4.70:1 */
+  --warn-wash: #fdf1e3;
+  --ok: #15803d;          /* 4.64:1 */
+  --ok-wash: #e9f5ed;
+
+  /* --- hình khối --- */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --shadow-1: 0 1px 2px rgb(28 27 25 / 6%);
+  --shadow-2: 0 4px 14px -6px rgb(28 27 25 / 18%);
+
+  /* --- chuyển động --- */
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --dur-slow: 260ms;
+  --ease-out: cubic-bezier(0.22, 0.75, 0.3, 1);
+  --ease-in: cubic-bezier(0.55, 0, 0.9, 0.35);
+
+  font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+}
+
 * {
   box-sizing: border-box;
 }
 
-:root {
-  --ok: #2f7d32;
-  --warn: #b26a00;
-  --danger: #c62828;
-  --line: #e0ddd7;
-  --muted: #6b6258;
-  --ink: #1a1a1a;
-
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-  color: var(--ink);
-}
-
 body {
   margin: 0;
+  background: var(--bg);
 }
 
-.app {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 24px 16px 64px;
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
 }
 
 button {
   cursor: pointer;
 }
 
+/* tiêu điểm bàn phím — không bao giờ bị gỡ */
 button:focus-visible,
 input:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--warn);
+select:focus-visible,
+.check__input:focus-visible + .check__box {
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
-/* Form */
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 16px 80px;
+}
+
+/* ============================ Đầu trang ============================ */
+.app__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.app__mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: var(--surface);
+  background: var(--primary);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
+  flex: none;
+}
+
+.app__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.app__sub {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.app__today {
+  margin: 0 0 0 auto;
+  padding: 5px 11px;
+  font-size: 0.75rem;
+  color: var(--primary);
+  background: var(--primary-wash);
+  border-radius: 999px;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+/* ============================ Form ============================ */
 .assignment-form {
   display: grid;
-  gap: 12px;
-  padding: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+  padding: 18px;
+  margin-bottom: 26px;
+  background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 8px;
-  margin-bottom: 24px;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
+}
+
+.assignment-form > .form__actions {
+  grid-column: 1 / -1;
 }
 
 .field {
   display: grid;
-  gap: 4px;
+  gap: 5px;
+  min-width: 0;
 }
 
 .field label {
-  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--muted);
 }
 
-.field-error {
-  color: var(--danger);
-  font-size: 0.8rem;
-  margin: 0;
+.field label svg {
+  color: var(--faint);
 }
 
-/* Filters */
+.field input,
+.field select {
+  width: 100%;
+  height: 40px;
+  padding: 0 11px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.field input:hover,
+.field select:hover {
+  border-color: var(--faint);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-wash);
+}
+
+.field--invalid input {
+  border-color: var(--danger);
+  background: var(--danger-wash);
+}
+
+.field--invalid input:focus {
+  box-shadow: 0 0 0 3px rgb(179 38 30 / 14%);
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--danger);
+  animation: shift-in var(--dur) var(--ease-out) both;
+}
+
+.form__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.form__submit:hover:not(:disabled) {
+  background: var(--primary-deep);
+  box-shadow: var(--shadow-2);
+}
+
+.form__submit:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.form__submit:disabled {
+  background: var(--faint);
+  border-color: var(--faint);
+  cursor: not-allowed;
+}
+
+/* ============================ Bộ lọc ============================ */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -70,101 +255,167 @@ select:focus-visible {
 }
 
 .filters button {
-  border: 1px solid var(--line);
-  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 13px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
   border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 0.85rem;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.filters button:hover {
+  color: var(--ink);
+  border-color: var(--faint);
+  background: var(--surface-2);
+}
+
+.filters button:active {
+  transform: scale(0.97);
 }
 
 .filters button[aria-pressed='true'] {
-  background: var(--ink);
   color: #fff;
-  border-color: var(--ink);
+  background: var(--primary);
+  border-color: var(--primary);
 }
 
-/* List */
-.list ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.empty {
+.filters .n {
+  padding: 1px 6px;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg);
+  border-radius: 999px;
   color: var(--muted);
-  text-align: center;
-  padding: 24px 0;
+}
+
+.filters button[aria-pressed='true'] .n {
+  color: #fff;
+  background: rgb(255 255 255 / 22%);
+}
+
+/* ============================ Danh sách ============================ */
+.list ul {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 .assignment-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 14px;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-left: 3px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
+  animation: item-in var(--dur-slow) var(--ease-out) both;
+  transition:
+    border-color var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out),
+    transform var(--dur) var(--ease-out);
+}
+
+.assignment-item:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-2);
+  transform: translateY(-1px);
+}
+
+/* dải màu bên trái mang trạng thái hạn nộp */
+.assignment-item--danger {
+  border-left-color: var(--danger);
+}
+
+.assignment-item--warn {
+  border-left-color: var(--warn);
+}
+
+.assignment-item--ok {
+  border-left-color: var(--primary);
+}
+
+.assignment-item--done {
+  background: var(--surface-2);
+  border-left-color: var(--ok);
 }
 
 .assignment-item--busy {
-  opacity: 0.5;
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .assignment-item__body {
-  flex: 1;
   min-width: 0;
 }
 
 .assignment-item__subject {
-  margin: 0;
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 2px;
+  font-size: 0.75rem;
   color: var(--muted);
+}
+
+.assignment-item__subject svg {
+  color: var(--faint);
+  flex: none;
 }
 
 .assignment-item__title {
-  margin: 2px 0;
+  margin: 0 0 4px;
+  font-size: 0.9375rem;
   font-weight: 600;
+  overflow-wrap: anywhere;
+  transition: color var(--dur) var(--ease-out);
 }
 
 .assignment-item__title--done {
-  text-decoration: line-through;
   color: var(--muted);
-  font-weight: 400;
+  font-weight: 500;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--faint);
 }
 
 .assignment-item__due {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 
-/* Badge */
-.badge {
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 999px;
-  white-space: nowrap;
+.assignment-item__due span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-variant-numeric: tabular-nums;
 }
 
-.badge--high {
-  background: #fdecea;
-  color: var(--danger);
+/* ---- đếm ngược: biểu tượng + chữ + trọng lượng, màu chỉ là lớp phụ ---- */
+.countdown {
+  font-weight: 600;
 }
 
-.badge--medium {
-  background: #fff4e0;
-  color: var(--warn);
-}
-
-.badge--low {
-  background: #e9f5ea;
-  color: var(--ok);
-}
-
-/* Countdown */
 .countdown--ok {
-  color: var(--ok);
+  color: var(--primary);
 }
 
 .countdown--warn {
@@ -173,5 +424,322 @@ select:focus-visible {
 
 .countdown--danger {
   color: var(--danger);
+}
+
+/* ---- ô đánh dấu hoàn thành ---- */
+.check {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -6px;
+  cursor: pointer;
+}
+
+.check__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.check__box {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  color: transparent;
+  background: var(--surface);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.check:hover .check__box {
+  border-color: var(--ok);
+}
+
+.check__input:checked + .check__box {
+  color: #fff;
+  background: var(--ok);
+  border-color: var(--ok);
+  animation: pop var(--dur) var(--ease-out);
+}
+
+.check:active .check__box {
+  transform: scale(0.9);
+}
+
+/* ---- huy hiệu độ ưu tiên ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  font-size: 0.6875rem;
   font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: 999px;
+}
+
+.badge--high {
+  color: var(--danger);
+  background: var(--danger-wash);
+  border-color: rgb(179 38 30 / 22%);
+}
+
+.badge--medium {
+  color: var(--warn);
+  background: var(--warn-wash);
+  border-color: rgb(168 90 7 / 22%);
+}
+
+.badge--low {
+  color: var(--muted);
+  background: var(--bg);
+  border-color: var(--line-strong);
+}
+
+/* ---- nút chỉ có biểu tượng ---- */
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.icon-btn:hover:not(:disabled) {
+  color: var(--danger);
+  background: var(--danger-wash);
+  border-color: rgb(179 38 30 / 20%);
+}
+
+.icon-btn:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.icon-btn:disabled {
+  cursor: default;
+  color: var(--faint);
+}
+
+/* ============================ Trạng thái ============================ */
+.state {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 44px 20px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-md);
+  animation: shift-in var(--dur-slow) var(--ease-out) both;
+}
+
+.state svg {
+  color: var(--faint);
+}
+
+.state__title {
+  margin: 6px 0 0;
+  font-weight: 600;
+}
+
+.state p {
+  max-width: 44ch;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.state--error {
+  background: var(--danger-wash);
+  border: 1px solid rgb(179 38 30 / 28%);
+}
+
+.state--error p {
+  max-width: 52ch;
+  white-space: pre-line;
+}
+
+.state--error svg {
+  color: var(--danger);
+}
+
+.state--error .state__title {
+  color: var(--danger);
+}
+
+.state__retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 16px;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--danger);
+  background: var(--surface);
+  border: 1px solid rgb(179 38 30 / 35%);
+  border-radius: var(--r-sm);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.state__retry:hover {
+  background: #fff;
+  box-shadow: var(--shadow-2);
+}
+
+.state__retry:active {
+  transform: scale(0.97);
+}
+
+/* ---- khung xương lúc tải ---- */
+.skeleton-list {
+  display: grid;
+  gap: 10px;
+}
+
+.skeleton {
+  display: grid;
+  grid-template-columns: 21px 1fr 62px;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
+  border-radius: var(--r-md);
+}
+
+.skeleton i {
+  display: block;
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #eceae5 25%, #f6f5f2 50%, #eceae5 75%);
+  background-size: 200% 100%;
+  animation: sweep 1.3s linear infinite;
+}
+
+.skeleton i:first-child {
+  height: 21px;
+  border-radius: var(--r-sm);
+}
+
+.skeleton__lines {
+  display: grid;
+  gap: 7px;
+}
+
+/* ============================ Chuyển động ============================ */
+@keyframes item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes shift-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes pop {
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes sweep {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.spin {
+  animation: spin 900ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+
+  .spin,
+  .skeleton i {
+    animation: none;
+  }
+}
+
+/* ============ Thiết bị chạm: mọi vùng bấm ≥ 44×44 (§2) ============ */
+@media (pointer: coarse) {
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .filters button {
+    min-height: 44px;
+  }
+}
+
+/* ============================ Màn hình hẹp ============================ */
+@media (max-width: 640px) {
+  .app {
+    padding: 22px 12px 64px;
+  }
+
+  .app__head {
+    flex-wrap: wrap;
+  }
+
+  .app__today {
+    margin-left: 0;
+  }
+
+  .assignment-form {
+    grid-template-columns: 1fr;
+  }
+
+  .assignment-item {
+    grid-template-columns: auto 1fr auto;
+    row-gap: 8px;
+  }
+
+  .assignment-item__body {
+    grid-column: 2 / -1;
+  }
+
+  .badge {
+    grid-column: 2;
+    justify-self: start;
+  }
 }
